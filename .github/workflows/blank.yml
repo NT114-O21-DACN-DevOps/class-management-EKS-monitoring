@@ -57,16 +57,17 @@ jobs:
           helm repo add grafana https://grafana.github.io/helm-charts
           helm repo update
 
-      - name: Install AWS EBS CSI Driver
-        run: |
-          helm install aws-ebs-csi-driver aws-ebs-csi-driver/aws-ebs-csi-driver --namespace kube-system
+      
       - name: Uninstall  (if exists)
         run: |
           helm uninstall aws-ebs-csi-driver --namespace kube-system || true
           helm uninstall prometheus --namespace monitoring || true
           helm uninstall grafana --namespace monitoring || true
           
-
+      - name: Install AWS EBS CSI Driver
+        run: |
+          helm install aws-ebs-csi-driver aws-ebs-csi-driver/aws-ebs-csi-driver --namespace kube-system
+          
       - name: Install Prometheus
         run: |
           helm install prometheus prometheus-community/prometheus --namespace monitoring --set server.persistentVolume.existingClaim=prometheus-server --set alertmanager.persistentVolume.existingClaim=alertmanager

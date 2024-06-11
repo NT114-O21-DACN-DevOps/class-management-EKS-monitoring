@@ -27,7 +27,7 @@ jobs:
         run: |
           mkdir -p ~/.aws
           
-          echo "${{ secrets.AWS_CLI_TOKEN }}" >> ~/.aws/credentials
+          echo "${{ secrets.AWS_CLI_TOKEN }}" > ~/.aws/credentials
 
       - name: Set up kubectl
         run: |

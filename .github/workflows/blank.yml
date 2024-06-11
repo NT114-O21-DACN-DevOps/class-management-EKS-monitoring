@@ -40,9 +40,9 @@ jobs:
 
       - name: Create namespace and apply PVCs
         run: |
-          kubectl delete namespace monitoring || true
-          kubectl create namespace monitoring
-          kubectl apply -f monitoring-pvc.yaml
+          kubectl delete namespace prometheus || true
+          kubectl create namespace prometheus
+          kubectl apply -f prometheus-pvc.yaml
 
       - name: Install Helm
         run: |
@@ -61,8 +61,8 @@ jobs:
       - name: Uninstall  (if exists)
         run: |
           helm uninstall aws-ebs-csi-driver --namespace kube-system || true
-          helm uninstall prometheus --namespace monitoring || true
-          helm uninstall grafana --namespace monitoring || true
+          helm uninstall prometheus --namespace prometheus || true
+          helm uninstall grafana --namespace prometheus || true
           
       - name: Install AWS EBS CSI Driver
         run: |
@@ -70,17 +70,17 @@ jobs:
           
       - name: Install Prometheus
         run: |
-          helm install prometheus prometheus-community/prometheus --namespace monitoring --set server.persistentVolume.existingClaim=prometheus-server --set alertmanager.persistentVolume.existingClaim=alertmanager
+          helm install prometheus prometheus-community/prometheus --namespace prometheus --set server.persistentVolume.existingClaim=prometheus-server --set alertmanager.persistentVolume.existingClaim=alertmanager
 
       - name: Expose Prometheus services
         run: |
-          kubectl expose service prometheus-server --type=NodePort --target-port=9090 --name=prometheus-server-ext -n monitoring
-          kubectl expose service prometheus-kube-state-metrics --type=NodePort --target-port=8080 --name=prometheus-kube-state-metrics-ext -n monitoring
+          kubectl expose service prometheus-server --type=NodePort --target-port=9090 --name=prometheus-server-ext -n prometheus
+          kubectl expose service prometheus-kube-state-metrics --type=NodePort --target-port=8080 --name=prometheus-kube-state-metrics-ext -n prometheus
 
       - name: Install Grafana
         run: |
-          helm install grafana grafana/grafana --namespace monitoring --set persistence.enabled=true,persistence.existingClaim=grafana-storage
+          helm install grafana grafana/grafana --namespace prometheus --set persistence.enabled=true,persistence.existingClaim=grafana-storage
 
       - name: Expose Grafana service
         run: |
-          kubectl expose service grafana --type=NodePort --target-port=3000 --name=grafana-ext -n monitoring
+          kubectl expose service grafana --type=NodePort --target-port=3000 --name=grafana-ext -n prometheus

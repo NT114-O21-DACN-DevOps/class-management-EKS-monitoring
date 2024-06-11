@@ -84,3 +84,6 @@ jobs:
       - name: Expose Grafana service
         run: |
           kubectl expose service grafana --type=NodePort --target-port=3000 --name=grafana-ext -n prometheus
+          kubectl get secret --namespace prometheus grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+      - name: Check 
+          kubectl get all -n prometheus

@@ -40,6 +40,7 @@ jobs:
 
       - name: Create namespace and apply PVCs
         run: |
+          kubectl delete namespace monitoring || true
           kubectl create namespace monitoring
           kubectl apply -f monitoring-pvc.yaml
 
@@ -64,6 +65,7 @@ jobs:
           helm uninstall aws-ebs-csi-driver --namespace kube-system || true
           helm uninstall prometheus --namespace monitoring || true
           helm uninstall grafana --namespace monitoring || true
+          
 
       - name: Install Prometheus
         run: |

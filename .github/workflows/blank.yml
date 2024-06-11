@@ -26,13 +26,53 @@ jobs:
       - name: Configure AWS credentials
         run: |
           mkdir -p ~/.aws
-          echo "${{ secrets.AWS_CLI_TOKEN }}" > ~/.aws/credentials
+          echo "[default]" > ~/.aws/credentials
+          echo "${{ secrets.AWS_CLI_TOKEN }}" >> ~/.aws/credentials
 
       - name: Set up kubectl
         run: |
           sudo snap install kubectl --classic
-          
+
       - name: Connect to EKS cluster
         run: |
           aws eks update-kubeconfig --region us-east-1 --name my-cluster
           kubectl get nodes -o wide
+
+      - name: Create namespace and apply PVCs
+        run: |
+          kubectl create namespace monitoring
+          kubectl apply -f monitoring-pvc.yaml
+
+      - name: Install Helm
+        run: |
+          sudo snap install helm --classic
+
+      - name: Add Helm repositories
+        run: |
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+          helm repo update
+          helm repo add aws-ebs-csi-driver https://kubernetes-sigs.github.io/aws-ebs-csi-driver
+          helm repo update
+          helm repo add grafana https://grafana.github.io/helm-charts
+          helm repo update
+
+      - name: Install AWS EBS CSI Driver
+        run: |
+          helm install aws-ebs-csi-driver aws-ebs-csi-driver/aws-ebs-csi-driver --namespace kube-system
+
+      - name: Install Prometheus
+        run: |
+          helm install prometheus prometheus-community/prometheus --namespace monitoring --set server.persistentVolume.existingClaim=prometheus-server --set alertmanager.persistentVolume.existingClaim=alertmanager
+
+      - name: Expose Prometheus services
+        run: |
+          kubectl expose service prometheus-server --type=NodePort --target-port=9090 --name=prometheus-server-ext -n monitoring
+          kubectl expose service prometheus-kube-state-metrics --type=NodePort --target-port=8080 --name=prometheus-kube-state-metrics-ext -n monitoring
+
+      - name: Install Grafana
+        run: |
+          helm install grafana grafana/grafana --namespace monitoring --set persistence.enabled=true,persistence.existingClaim=grafana-storage
+
+      - name: Expose Grafana service
+        run: |
+          kubectl expose service grafana --type=NodePort --target-port=3000 --name=grafana-ext -n monitoring

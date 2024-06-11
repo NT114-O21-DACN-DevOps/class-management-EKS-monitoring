@@ -59,6 +59,11 @@ jobs:
       - name: Install AWS EBS CSI Driver
         run: |
           helm install aws-ebs-csi-driver aws-ebs-csi-driver/aws-ebs-csi-driver --namespace kube-system
+      - name: Uninstall  (if exists)
+        run: |
+          helm uninstall aws-ebs-csi-driver --namespace kube-system || true
+          helm uninstall prometheus --namespace monitoring || true
+          helm uninstall grafana --namespace monitoring || true
 
       - name: Install Prometheus
         run: |

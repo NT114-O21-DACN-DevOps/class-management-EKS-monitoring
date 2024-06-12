@@ -1,4 +1,4 @@
-name: CI
+name: Set up monitoring system
 
 on:
   push:

@@ -1,0 +1,46 @@
+apiVersion: v1
+data:
+  alertmanager.yml: |
+    global:
+      resolve_timeout: 1m
+      # slack_api_url: ''
+
+    receivers:
+    - name: 'gmail-notifications'
+      email_configs:
+      - to: tranchucthienmt@gmail.com 
+        from: tranchucthienmt@gmail.com # Update your from mail id here
+        smarthost: smtp.gmail.com:587
+        auth_username: tranchucthienmt@gmail.com # Update your from mail id here
+        auth_identity: tranchucthienmt@gmail.com # Update your from mail id here
+        auth_password: password # Update your app-password here
+        send_resolved: true
+        headers:
+          subject: " Prometheus -  Alert  "
+        text: "{{ range .Alerts }} Hi, \n{{ .Annotations.summary }}  \n {{ .Annotations.description }} {{end}} "
+        # slack_configs:
+        #  - channel: '@you'
+        #    send_resolved: true
+
+    route:
+      group_wait: 10s
+      group_interval: 2m
+      receiver: 'gmail-notifications'
+      repeat_interval: 2m
+    
+kind: ConfigMap
+metadata:
+  annotations:
+    meta.helm.sh/release-name: prometheus
+    meta.helm.sh/release-namespace: default
+  creationTimestamp: "2024-06-19T15:33:13Z"
+  labels:
+    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: alertmanager
+    app.kubernetes.io/version: v0.27.0
+    helm.sh/chart: alertmanager-1.11.0
+  name: prometheus-alertmanager
+  namespace: default
+  resourceVersion: "1068"
+  uid: e4ba455f-5d04-4249-a9d1-c0da8f662974

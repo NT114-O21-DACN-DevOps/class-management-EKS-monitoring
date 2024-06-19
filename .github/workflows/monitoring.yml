@@ -72,6 +72,7 @@ jobs:
         run: |
           kubectl expose service prometheus-server --type=NodePort --target-port=9090 --name=prometheus-server-ext -n prometheus
           kubectl expose service prometheus-kube-state-metrics --type=NodePort --target-port=8080 --name=prometheus-kube-state-metrics-ext -n prometheus
+          kubectl expose service prometheus-alertmanager --type=NodePort --target-port=9093 --name=prometheus-alermanager-ext -n prometheus
 
       - name: Install Grafana
         run: |

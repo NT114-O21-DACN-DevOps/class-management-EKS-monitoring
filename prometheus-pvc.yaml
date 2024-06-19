@@ -14,7 +14,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: alertmanager
+  name: storage-prometheus-alertmanager-0
   namespace: prometheus
 spec:
   accessModes:

@@ -5,7 +5,7 @@ serverFiles:
         rules:
           - alert: InstanceDown
             expr: up{job="kubernetes-nodes"} == 0
-            for: 1m   # Thay đổi thời gian cảnh báo từ 2 phút thành 1 phút
+            for: 1m   
             labels:
               severity: page
             annotations:
@@ -14,7 +14,7 @@ serverFiles:
               description: "Node {{ $labels.kubernetes_io_hostname }} has been down for more than 1 minute."
           - alert: NodeShutdown
             expr: up{job="kubernetes-nodes"} == 0
-            for: 1m   # Thay đổi thời gian cảnh báo từ 5 phút thành 1 phút
+            for: 1m   
             labels:
               severity: page
             annotations:
@@ -60,7 +60,7 @@ serverFiles:
         rules:
           - alert: PodDeleted
             expr: kube_pod_deletion_timestamp{job="kubernetes-service-endpoints"}
-            for: 1m
+            for: 5s
             labels:
               severity: warning
             annotations:

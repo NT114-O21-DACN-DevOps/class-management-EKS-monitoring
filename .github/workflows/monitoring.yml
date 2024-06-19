@@ -66,7 +66,7 @@ jobs:
           
       - name: Install Prometheus
         run: |
-          helm install prometheus prometheus-community/prometheus --namespace prometheus --set server.persistentVolume.existingClaim=prometheus-server --set alertmanager.persistentVolume.existingClaim=alertmanager -f alert_rules.yaml
+          helm install prometheus prometheus-community/prometheus --namespace prometheus --set server.persistentVolume.existingClaim=prometheus-server --set alertmanager.persistentVolume.existingClaim=storage-prometheus-alertmanager-0 -f alert_rules.yaml
 
       - name: Expose Prometheus services
         run: |

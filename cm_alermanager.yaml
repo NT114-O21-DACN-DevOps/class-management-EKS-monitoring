@@ -8,7 +8,7 @@ data:
     receivers:
     - name: 'gmail-notifications'
       email_configs:
-      - to: tranchucthienmt@gmail.com 
+      - to: tranchucthienmt@gmail.com
         from: tranchucthienmt@gmail.com # Update your from mail id here
         smarthost: smtp.gmail.com:587
         auth_username: tranchucthienmt@gmail.com # Update your from mail id here
@@ -27,7 +27,7 @@ data:
       group_interval: 2m
       receiver: 'gmail-notifications'
       repeat_interval: 2m
-    
+
 kind: ConfigMap
 metadata:
   annotations:

@@ -22,7 +22,6 @@ jobs:
       - name: Configure AWS credentials
         run: |
           mkdir -p ~/.aws
-          
           echo "${{ secrets.AWS_CLI_TOKEN }}" > ~/.aws/credentials
 
       - name: Set up kubectl
@@ -54,17 +53,16 @@ jobs:
           helm repo add grafana https://grafana.github.io/helm-charts
           helm repo update
 
-      
       - name: Uninstall  (if exists)
         run: |
           helm uninstall aws-ebs-csi-driver --namespace kube-system || true
           helm uninstall prometheus --namespace prometheus || true
           helm uninstall grafana --namespace prometheus || true
-          
+
       - name: Install AWS EBS CSI Driver
         run: |
           helm install aws-ebs-csi-driver aws-ebs-csi-driver/aws-ebs-csi-driver --namespace kube-system
-          
+
       - name: Install Prometheus
         run: |
           helm install prometheus prometheus-community/prometheus --namespace prometheus --set server.persistentVolume.existingClaim=prometheus-server --set alertmanager.persistentVolume.existingClaim=storage-prometheus-alertmanager-0 -f alert_rules.yaml
